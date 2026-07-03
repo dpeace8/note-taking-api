@@ -1,6 +1,7 @@
 const express = require("express");
 const noteRoutes = require("./routes/noteRoutes");
 const userRoutes = require("./routes/userRoutes");
+const teamRoutes = require("./routes/teamRoutes");
 
 const app = express();
 
@@ -12,6 +13,7 @@ app.get("/health", (req, res) => {
 
 app.use("/notes", noteRoutes);
 app.use("/users", userRoutes);
+app.use("/teams", teamRoutes);
 
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
