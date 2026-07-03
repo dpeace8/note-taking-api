@@ -1,10 +1,12 @@
 const db = require("../db/database");
 
-function findAll({ limit, offset }) {
+function findAll({ limit, offset, sort }) {
+  const orderDirection = sort === "asc" ? "ASC" : "DESC";
+
   return db.prepare(`
     SELECT id, user_id, team_id, title, content, created_at, updated_at
     FROM notes
-    ORDER BY created_at DESC, id DESC
+    ORDER BY id ${orderDirection}
     LIMIT ? OFFSET ?
   `).all(limit, offset);
 }

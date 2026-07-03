@@ -71,6 +71,7 @@ describe("Notes API", () => {
     expect(res.statusCode).toBe(200);
     expect(res.body.page).toBe(1);
     expect(res.body.limit).toBe(10);
+    expect(res.body.sort).toBe("desc");
     expect(Array.isArray(res.body.data)).toBe(true);
     expect(res.body.data.length).toBe(1);
     expect(res.body.data[0].team_id).toBe(teamId);
@@ -94,6 +95,7 @@ describe("Notes API", () => {
     expect(res.statusCode).toBe(200);
     expect(res.body.page).toBe(1);
     expect(res.body.limit).toBe(10);
+    expect(res.body.sort).toBe("desc");
     expect(res.body.data.length).toBe(10);
   });
 
@@ -114,7 +116,62 @@ describe("Notes API", () => {
     expect(res.statusCode).toBe(200);
     expect(res.body.page).toBe(2);
     expect(res.body.limit).toBe(5);
+    expect(res.body.sort).toBe("desc");
     expect(res.body.data.length).toBe(5);
+  });
+
+  test("GET /notes sorts by id descending by default", async () => {
+    const firstRes = await request(app)
+      .post("/notes")
+      .send({
+        user_id: userId,
+        team_id: teamId,
+        title: "First note",
+        content: "First content"
+      });
+
+    const secondRes = await request(app)
+      .post("/notes")
+      .send({
+        user_id: userId,
+        team_id: teamId,
+        title: "Second note",
+        content: "Second content"
+      });
+
+    const res = await request(app).get("/notes");
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body.sort).toBe("desc");
+    expect(res.body.data[0].id).toBe(secondRes.body.id);
+    expect(res.body.data[1].id).toBe(firstRes.body.id);
+  });
+
+  test("GET /notes supports sorting by id ascending", async () => {
+    const firstRes = await request(app)
+      .post("/notes")
+      .send({
+        user_id: userId,
+        team_id: teamId,
+        title: "First note",
+        content: "First content"
+      });
+
+    const secondRes = await request(app)
+      .post("/notes")
+      .send({
+        user_id: userId,
+        team_id: teamId,
+        title: "Second note",
+        content: "Second content"
+      });
+
+    const res = await request(app).get("/notes?sort=asc");
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body.sort).toBe("asc");
+    expect(res.body.data[0].id).toBe(firstRes.body.id);
+    expect(res.body.data[1].id).toBe(secondRes.body.id);
   });
 
   test("GET /notes/:id returns one note", async () => {
