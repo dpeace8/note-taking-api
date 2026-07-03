@@ -4,6 +4,8 @@ const db = require("../src/db/database");
 
 describe("Teams API", () => {
   beforeEach(() => {
+    db.prepare("DELETE FROM notes").run();
+    db.prepare("DELETE FROM team_members").run();
     db.prepare("DELETE FROM teams").run();
   });
 

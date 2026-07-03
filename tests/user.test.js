@@ -5,6 +5,8 @@ const db = require("../src/db/database");
 describe("Users API", () => {
   beforeEach(() => {
     db.prepare("DELETE FROM notes").run();
+    db.prepare("DELETE FROM team_members").run();
+    db.prepare("DELETE FROM teams").run();
     db.prepare("DELETE FROM users").run();
   });
 

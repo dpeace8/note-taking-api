@@ -28,6 +28,12 @@ describe("Notes API", () => {
 
     userId = userRes.body.id;
     teamId = teamRes.body.id;
+
+    await request(app)
+      .post(`/teams/${teamId}/members`)
+      .send({
+        userId
+      });
   });
 
   test("POST /notes creates a note", async () => {
@@ -174,6 +180,27 @@ describe("Notes API", () => {
 
     expect(res.statusCode).toBe(400);
     expect(res.body.error).toBe("User, team, title and content are required");
+  });
+
+  test("POST /notes returns 403 when user is not a team member", async () => {
+    const userRes = await request(app)
+      .post("/users")
+      .send({
+        name: "Other User",
+        email: "other@example.com"
+      });
+
+    const res = await request(app)
+      .post("/notes")
+      .send({
+        user_id: userRes.body.id,
+        team_id: teamId,
+        title: "Blocked note",
+        content: "This user is not in the team"
+      });
+
+    expect(res.statusCode).toBe(403);
+    expect(res.body.error).toBe("User is not a member of this team");
   });
 
   test("GET /notes/:id returns 404 when note does not exist", async () => {

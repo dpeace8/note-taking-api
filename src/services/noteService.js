@@ -1,4 +1,5 @@
 const noteRepository = require("../repositories/noteRepository");
+const memberRepository = require("../repositories/memberRepository");
 
 function getAllNotes() {
   return noteRepository.findAll();
@@ -20,6 +21,14 @@ function createNote(data) {
   if (!data.user_id || !data.team_id || !data.title || !data.content) {
     const error = new Error("User, team, title and content are required");
     error.statusCode = 400;
+    throw error;
+  }
+
+  const member = memberRepository.findByTeamAndUser(data.team_id, data.user_id);
+
+  if (!member) {
+    const error = new Error("User is not a member of this team");
+    error.statusCode = 403;
     throw error;
   }
 
