@@ -5,6 +5,7 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "node src/server.js",
+    "seed": "node src/db/seed.js",
     "test": "jest"
   },
   "keywords": [],
