@@ -5,7 +5,7 @@ const teamRepository = require("../repositories/teamRepository");
 const VALID_ROLES = ["owner", "admin", "member"];
 
 function addMember(teamId, data) {
-  const userId = Number(data.userId);
+  const userId = Number(data.user_id);
   const role = data.role || "member";
 
   if (!userId) {

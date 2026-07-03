@@ -32,7 +32,7 @@ describe("Notes API", () => {
     await request(app)
       .post(`/teams/${teamId}/members`)
       .send({
-        userId
+        user_id: userId
       });
   });
 

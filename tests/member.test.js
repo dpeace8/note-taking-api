@@ -33,7 +33,7 @@ describe("Members API", () => {
     const res = await request(app)
       .post(`/teams/${teamId}/members`)
       .send({
-        userId,
+        user_id: userId,
         role: "admin"
       });
 
@@ -48,7 +48,7 @@ describe("Members API", () => {
     const res = await request(app)
       .post(`/teams/${teamId}/members`)
       .send({
-        userId
+        user_id: userId
       });
 
     expect(res.statusCode).toBe(201);
@@ -59,7 +59,7 @@ describe("Members API", () => {
     await request(app)
       .post(`/teams/${teamId}/members`)
       .send({
-        userId,
+        user_id: userId,
         role: "owner"
       });
 
@@ -79,7 +79,7 @@ describe("Members API", () => {
     await request(app)
       .post(`/teams/${teamId}/members`)
       .send({
-        userId,
+        user_id: userId,
         role: "admin"
       });
 
@@ -95,7 +95,7 @@ describe("Members API", () => {
     await request(app)
       .post(`/teams/${teamId}/members`)
       .send({
-        userId,
+        user_id: userId,
         role: "owner"
       });
 
@@ -113,7 +113,7 @@ describe("Members API", () => {
     await request(app)
       .post(`/teams/${teamId}/members`)
       .send({
-        userId,
+        user_id: userId,
         role: "member"
       });
 
@@ -133,7 +133,7 @@ describe("Members API", () => {
     await request(app)
       .post(`/teams/${teamId}/members`)
       .send({
-        userId
+        user_id: userId
       });
 
     const deleteRes = await request(app).delete(`/teams/${teamId}/members/${userId}`);
@@ -146,7 +146,7 @@ describe("Members API", () => {
     expect(getRes.body.error).toBe("Member not found");
   });
 
-  test("POST /teams/:teamId/members returns 400 when userId is missing", async () => {
+  test("POST /teams/:teamId/members returns 400 when user_id is missing", async () => {
     const res = await request(app)
       .post(`/teams/${teamId}/members`)
       .send({
@@ -161,7 +161,7 @@ describe("Members API", () => {
     const res = await request(app)
       .post(`/teams/${teamId}/members`)
       .send({
-        userId,
+        user_id: userId,
         role: "viewer"
       });
 
@@ -173,7 +173,7 @@ describe("Members API", () => {
     const res = await request(app)
       .post("/teams/9999/members")
       .send({
-        userId
+        user_id: userId
       });
 
     expect(res.statusCode).toBe(404);
@@ -184,7 +184,7 @@ describe("Members API", () => {
     const res = await request(app)
       .post(`/teams/${teamId}/members`)
       .send({
-        userId: 9999
+        user_id: 9999
       });
 
     expect(res.statusCode).toBe(404);
@@ -195,13 +195,13 @@ describe("Members API", () => {
     await request(app)
       .post(`/teams/${teamId}/members`)
       .send({
-        userId
+        user_id: userId
       });
 
     const res = await request(app)
       .post(`/teams/${teamId}/members`)
       .send({
-        userId
+        user_id: userId
       });
 
     expect(res.statusCode).toBe(409);
@@ -233,7 +233,7 @@ describe("Members API", () => {
     await request(app)
       .post(`/teams/${teamId}/members`)
       .send({
-        userId
+        user_id: userId
       });
 
     const res = await request(app)
@@ -248,7 +248,7 @@ describe("Members API", () => {
     await request(app)
       .post(`/teams/${teamId}/members`)
       .send({
-        userId
+        user_id: userId
       });
 
     const res = await request(app)
