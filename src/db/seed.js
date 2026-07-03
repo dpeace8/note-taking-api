@@ -2,7 +2,7 @@ const db = require("./database");
 
 const users = [
   { id: 1, name: "Daroush", email: "daroush@example.com" },
-  { id: 2, name: "War", email: "war@example.com" },
+  { id: 2, name: "Wargsen", email: "wargsen@example.com" },
   { id: 3, name: "Ceri", email: "ceri@example.com" }
 ];
 
