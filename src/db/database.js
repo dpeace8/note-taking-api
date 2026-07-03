@@ -33,12 +33,21 @@ db.exec(`
   CREATE TABLE IF NOT EXISTS notes (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL,
+    team_id INTEGER NOT NULL,
     title TEXT NOT NULL,
     content TEXT NOT NULL,
     created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id)
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (team_id) REFERENCES teams(id)
   );
 `);
+
+const noteColumns = db.prepare("PRAGMA table_info(notes)").all();
+const hasTeamId = noteColumns.some((column) => column.name === "team_id");
+
+if (!hasTeamId) {
+  db.prepare("ALTER TABLE notes ADD COLUMN team_id INTEGER").run();
+}
 
 module.exports = db;

@@ -5,9 +5,12 @@ const db = require("../src/db/database");
 describe("Notes API", () => {
   let createdNoteId;
   let userId;
+  let teamId;
 
   beforeEach(async () => {
     db.prepare("DELETE FROM notes").run();
+    db.prepare("DELETE FROM team_members").run();
+    db.prepare("DELETE FROM teams").run();
     db.prepare("DELETE FROM users").run();
 
     const userRes = await request(app)
@@ -17,7 +20,14 @@ describe("Notes API", () => {
         email: "test@example.com"
       });
 
+    const teamRes = await request(app)
+      .post("/teams")
+      .send({
+        name: "Engineering"
+      });
+
     userId = userRes.body.id;
+    teamId = teamRes.body.id;
   });
 
   test("POST /notes creates a note", async () => {
@@ -25,6 +35,7 @@ describe("Notes API", () => {
       .post("/notes")
       .send({
         user_id: userId,
+        team_id: teamId,
         title: "First note",
         content: "This is my first note"
       });
@@ -32,6 +43,7 @@ describe("Notes API", () => {
     expect(res.statusCode).toBe(201);
     expect(res.body).toHaveProperty("id");
     expect(res.body.user_id).toBe(userId);
+    expect(res.body.team_id).toBe(teamId);
     expect(res.body.title).toBe("First note");
     expect(res.body.content).toBe("This is my first note");
 
@@ -43,6 +55,7 @@ describe("Notes API", () => {
       .post("/notes")
       .send({
         user_id: userId,
+        team_id: teamId,
         title: "First note",
         content: "This is my first note"
       });
@@ -52,6 +65,7 @@ describe("Notes API", () => {
     expect(res.statusCode).toBe(200);
     expect(Array.isArray(res.body)).toBe(true);
     expect(res.body.length).toBe(1);
+    expect(res.body[0].team_id).toBe(teamId);
     expect(res.body[0].title).toBe("First note");
   });
 
@@ -60,6 +74,7 @@ describe("Notes API", () => {
       .post("/notes")
       .send({
         user_id: userId,
+        team_id: teamId,
         title: "First note",
         content: "This is my first note"
       });
@@ -70,6 +85,7 @@ describe("Notes API", () => {
 
     expect(res.statusCode).toBe(200);
     expect(res.body.id).toBe(noteId);
+    expect(res.body.team_id).toBe(teamId);
     expect(res.body.title).toBe("First note");
     expect(res.body.content).toBe("This is my first note");
   });
@@ -79,6 +95,7 @@ describe("Notes API", () => {
       .post("/notes")
       .send({
         user_id: userId,
+        team_id: teamId,
         title: "First note",
         content: "This is my first note"
       });
@@ -103,6 +120,7 @@ describe("Notes API", () => {
       .post("/notes")
       .send({
         user_id: userId,
+        team_id: teamId,
         title: "First note",
         content: "This is my first note"
       });
@@ -124,11 +142,12 @@ describe("Notes API", () => {
       .post("/notes")
       .send({
         user_id: userId,
+        team_id: teamId,
         content: "This note has no title"
       });
 
     expect(res.statusCode).toBe(400);
-    expect(res.body.error).toBe("User, title and content are required");
+    expect(res.body.error).toBe("User, team, title and content are required");
   });
 
   test("POST /notes returns 400 when content is missing", async () => {
@@ -136,11 +155,25 @@ describe("Notes API", () => {
       .post("/notes")
       .send({
         user_id: userId,
+        team_id: teamId,
         title: "No content note"
       });
 
     expect(res.statusCode).toBe(400);
-    expect(res.body.error).toBe("User, title and content are required");
+    expect(res.body.error).toBe("User, team, title and content are required");
+  });
+
+  test("POST /notes returns 400 when team is missing", async () => {
+    const res = await request(app)
+      .post("/notes")
+      .send({
+        user_id: userId,
+        title: "No team note",
+        content: "This note has no team"
+      });
+
+    expect(res.statusCode).toBe(400);
+    expect(res.body.error).toBe("User, team, title and content are required");
   });
 
   test("GET /notes/:id returns 404 when note does not exist", async () => {

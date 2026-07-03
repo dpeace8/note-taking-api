@@ -2,7 +2,7 @@ const db = require("../db/database");
 
 function findAll() {
   return db.prepare(`
-    SELECT id, user_id, title, content, created_at, updated_at
+    SELECT id, user_id, team_id, title, content, created_at, updated_at
     FROM notes
     ORDER BY created_at DESC
   `).all();
@@ -10,7 +10,7 @@ function findAll() {
 
 function findById(id) {
   return db.prepare(`
-    SELECT id, user_id, title, content, created_at, updated_at
+    SELECT id, user_id, team_id, title, content, created_at, updated_at
     FROM notes
     WHERE id = ?
   `).get(id);
@@ -18,9 +18,9 @@ function findById(id) {
 
 function create(note) {
   const result = db.prepare(`
-    INSERT INTO notes (user_id, title, content)
-    VALUES (?, ?, ?)
-  `).run(note.user_id, note.title, note.content);
+    INSERT INTO notes (user_id, team_id, title, content)
+    VALUES (?, ?, ?, ?)
+  `).run(note.user_id, note.team_id, note.title, note.content);
 
   return findById(result.lastInsertRowid);
 }

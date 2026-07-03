@@ -17,14 +17,15 @@ function getNoteById(id) {
 }
 
 function createNote(data) {
-  if (!data.user_id || !data.title || !data.content) {
-    const error = new Error("User, title and content are required");
+  if (!data.user_id || !data.team_id || !data.title || !data.content) {
+    const error = new Error("User, team, title and content are required");
     error.statusCode = 400;
     throw error;
   }
 
   return noteRepository.create({
     user_id: data.user_id,
+    team_id: data.team_id,
     title: data.title,
     content: data.content
   });
