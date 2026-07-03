@@ -1,8 +1,17 @@
 const noteRepository = require("../repositories/noteRepository");
 const memberRepository = require("../repositories/memberRepository");
 
-function getAllNotes() {
-  return noteRepository.findAll();
+function getAllNotes(options = {}) {
+  const limit = Number(options.limit) > 0 ? Number(options.limit) : 10;
+  const page = Number(options.page) > 0 ? Number(options.page) : 1;
+  const offset = (page - 1) * limit;
+  const notes = noteRepository.findAll({ limit, offset });
+
+  return {
+    page,
+    limit,
+    data: notes
+  };
 }
 
 function getNoteById(id) {

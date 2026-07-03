@@ -1,11 +1,12 @@
 const db = require("../db/database");
 
-function findAll() {
+function findAll({ limit, offset }) {
   return db.prepare(`
     SELECT id, user_id, team_id, title, content, created_at, updated_at
     FROM notes
-    ORDER BY created_at DESC
-  `).all();
+    ORDER BY created_at DESC, id DESC
+    LIMIT ? OFFSET ?
+  `).all(limit, offset);
 }
 
 function findById(id) {

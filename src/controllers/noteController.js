@@ -2,7 +2,11 @@ const noteService = require("../services/noteService");
 
 function getAllNotes(req, res, next) {
   try {
-    const notes = noteService.getAllNotes();
+    const notes = noteService.getAllNotes({
+      limit: req.query.limit,
+      page: req.query.page
+    });
+
     res.json(notes);
   } catch (error) {
     next(error);

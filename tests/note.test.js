@@ -69,10 +69,52 @@ describe("Notes API", () => {
     const res = await request(app).get("/notes");
 
     expect(res.statusCode).toBe(200);
-    expect(Array.isArray(res.body)).toBe(true);
-    expect(res.body.length).toBe(1);
-    expect(res.body[0].team_id).toBe(teamId);
-    expect(res.body[0].title).toBe("First note");
+    expect(res.body.page).toBe(1);
+    expect(res.body.limit).toBe(10);
+    expect(Array.isArray(res.body.data)).toBe(true);
+    expect(res.body.data.length).toBe(1);
+    expect(res.body.data[0].team_id).toBe(teamId);
+    expect(res.body.data[0].title).toBe("First note");
+  });
+
+  test("GET /notes defaults to 10 notes per page", async () => {
+    for (let index = 1; index <= 12; index += 1) {
+      await request(app)
+        .post("/notes")
+        .send({
+          user_id: userId,
+          team_id: teamId,
+          title: `Note ${index}`,
+          content: `Content ${index}`
+        });
+    }
+
+    const res = await request(app).get("/notes");
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body.page).toBe(1);
+    expect(res.body.limit).toBe(10);
+    expect(res.body.data.length).toBe(10);
+  });
+
+  test("GET /notes supports limit and page query params", async () => {
+    for (let index = 1; index <= 12; index += 1) {
+      await request(app)
+        .post("/notes")
+        .send({
+          user_id: userId,
+          team_id: teamId,
+          title: `Note ${index}`,
+          content: `Content ${index}`
+        });
+    }
+
+    const res = await request(app).get("/notes?limit=5&page=2");
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body.page).toBe(2);
+    expect(res.body.limit).toBe(5);
+    expect(res.body.data.length).toBe(5);
   });
 
   test("GET /notes/:id returns one note", async () => {
