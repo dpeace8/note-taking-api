@@ -1,7 +1,19 @@
 const db = require("../db/database");
 
-function findAll({ limit, offset, sort }) {
+function findAll({ limit, offset, sort, search }) {
   const orderDirection = sort === "asc" ? "ASC" : "DESC";
+
+  if (search) {
+    const searchPattern = `%${search}%`;
+
+    return db.prepare(`
+      SELECT id, user_id, team_id, title, content, created_at, updated_at
+      FROM notes
+      WHERE title LIKE ? OR content LIKE ?
+      ORDER BY id ${orderDirection}
+      LIMIT ? OFFSET ?
+    `).all(searchPattern, searchPattern, limit, offset);
+  }
 
   return db.prepare(`
     SELECT id, user_id, team_id, title, content, created_at, updated_at

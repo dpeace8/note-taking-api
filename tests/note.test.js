@@ -72,6 +72,7 @@ describe("Notes API", () => {
     expect(res.body.page).toBe(1);
     expect(res.body.limit).toBe(10);
     expect(res.body.sort).toBe("desc");
+    expect(res.body.search).toBe("");
     expect(Array.isArray(res.body.data)).toBe(true);
     expect(res.body.data.length).toBe(1);
     expect(res.body.data[0].team_id).toBe(teamId);
@@ -172,6 +173,77 @@ describe("Notes API", () => {
     expect(res.body.sort).toBe("asc");
     expect(res.body.data[0].id).toBe(firstRes.body.id);
     expect(res.body.data[1].id).toBe(secondRes.body.id);
+  });
+
+  test("GET /notes searches by title", async () => {
+    await request(app)
+      .post("/notes")
+      .send({
+        user_id: userId,
+        team_id: teamId,
+        title: "Budget review",
+        content: "Quarterly numbers"
+      });
+
+    await request(app)
+      .post("/notes")
+      .send({
+        user_id: userId,
+        team_id: teamId,
+        title: "Design review",
+        content: "Homepage mockups"
+      });
+
+    const res = await request(app).get("/notes?search=budget");
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body.search).toBe("budget");
+    expect(res.body.data.length).toBe(1);
+    expect(res.body.data[0].title).toBe("Budget review");
+  });
+
+  test("GET /notes searches by content", async () => {
+    await request(app)
+      .post("/notes")
+      .send({
+        user_id: userId,
+        team_id: teamId,
+        title: "Planning",
+        content: "Discuss launch timeline"
+      });
+
+    await request(app)
+      .post("/notes")
+      .send({
+        user_id: userId,
+        team_id: teamId,
+        title: "Retrospective",
+        content: "Review blockers"
+      });
+
+    const res = await request(app).get("/notes?search=launch");
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body.search).toBe("launch");
+    expect(res.body.data.length).toBe(1);
+    expect(res.body.data[0].content).toBe("Discuss launch timeline");
+  });
+
+  test("GET /notes returns an empty list when search has no matches", async () => {
+    await request(app)
+      .post("/notes")
+      .send({
+        user_id: userId,
+        team_id: teamId,
+        title: "Planning",
+        content: "Discuss launch timeline"
+      });
+
+    const res = await request(app).get("/notes?search=missing");
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body.search).toBe("missing");
+    expect(res.body.data).toEqual([]);
   });
 
   test("GET /notes/:id returns one note", async () => {

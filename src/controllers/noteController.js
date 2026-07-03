@@ -5,7 +5,8 @@ function getAllNotes(req, res, next) {
     const notes = noteService.getAllNotes({
       limit: req.query.limit,
       page: req.query.page,
-      sort: req.query.sort
+      sort: req.query.sort,
+      search: req.query.search
     });
 
     res.json(notes);

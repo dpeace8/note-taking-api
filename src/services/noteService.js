@@ -5,13 +5,15 @@ function getAllNotes(options = {}) {
   const limit = Number(options.limit) > 0 ? Number(options.limit) : 10;
   const page = Number(options.page) > 0 ? Number(options.page) : 1;
   const sort = options.sort === "asc" ? "asc" : "desc";
+  const search = typeof options.search === "string" ? options.search.trim() : "";
   const offset = (page - 1) * limit;
-  const notes = noteRepository.findAll({ limit, offset, sort });
+  const notes = noteRepository.findAll({ limit, offset, sort, search });
 
   return {
     page,
     limit,
     sort,
+    search,
     data: notes
   };
 }
