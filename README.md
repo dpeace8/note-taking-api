@@ -190,6 +190,10 @@ I used SQLite because it is simple to set up and allows the project to run local
 
 I chose Node.js because it is well-suited for building lightweight REST APIs quickly. It allowed me to focus on clean application structure, database modeling, and testability.
 
+I spent a lot of time designing the database schema. I want to make sure the logic makes sense before coding to ensure a smoother process.
+
+Modeling the many-to-many `team_members` table was the most challenging part. I had to figure out where those endpoints belong in the API. I decided to put it under teams and users since it was tied to both tables.
+
 ## Production Considerations
 
 If I had more time, I would add authentication and authorization to demonstrate functionality for different roles. For example, admins can add and delete members on their team. Another improvement is to add note visibility that allows users to make their notes private or shareable with the team.
